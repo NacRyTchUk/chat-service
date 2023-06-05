@@ -1,0 +1,5 @@
+
+chat-host: localhost
+chat-primary-port: 6080
+chat-rest-port: 6070
+chat-backup-port: 8081

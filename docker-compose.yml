@@ -1,0 +1,83 @@
+version: "3.8"
+services:
+
+  nats:
+    image: nats:2.9.16-alpine3.17
+    ports:
+      - "4222:4222"
+
+  database:
+    image: postgres:15.3-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: chat-db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "7080:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U postgres -d chat-db'" ]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+#    volumes:
+#      - ./postgres/01-init.sql:/docker-entrypoint-initdb.d/init.sql
+#      - ./postgres/postgres-data:/var/lib/postgresql/data
+
+  migrate:
+    image: migrate/migrate:v4.15.2
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./db/postgres/migrations:/postgres/migrations
+    command: [ "-path", "/postgres/migrations", "-database",  "postgres://postgres:postgres@database:5432/chat-db?sslmode=disable", "up" ]
+
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    command: redis-server --save 20 1 --loglevel warning --requirepass debug_pass
+
+  back:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6080:8080" # WSS
+      - "6070:8081" # REST Gateway
+    depends_on:
+      cache:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+  back2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6081:8080" # WSS
+      - "6071:8081" # REST Gateway
+    depends_on:
+      cache:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+  back3:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "6082:8080" # WSS
+      - "6072:8081" # REST Gateway
+    depends_on:
+      cache:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully

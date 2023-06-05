@@ -1,0 +1,13 @@
+nats-port: 4222
+nats-host: nats
+
+chat-host: back
+chat-primary-port: 8080
+chat-rest-port: 8081
+
+
+database-host: database
+database-port: 5432
+database-user: postgres
+database-dbname: chat-db
+database-password: postgres

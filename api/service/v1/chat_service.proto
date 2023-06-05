@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package chat_service.service.v1;
+
+option go_package = "chat-service/pkg/gen/go/api/service/v1;proto_chat_service";
+
+import "api/google/api/annotations.proto";
+import "api/model/v1/chat_model.proto";
+
+service ChatService {
+  rpc List(ListRequest) returns (ListResponse) {
+    option (google.api.http) = {
+      get: "/list"
+    };
+  }
+
+  rpc Join(JoinRequest) returns (JoinResponse) {
+    option (google.api.http) = {
+      post: "/join"
+    };
+  }
+}
+
+message JoinRequest {
+  string name = 1;
+  int64 chatId = 2;
+}
+
+message JoinResponse {
+  model.v1.Chat chat = 1;
+  repeated model.v1.Message messages = 2;
+}
+
+message ListRequest {
+  // empty
+}
+
+message ListResponse {
+  repeated model.v1.Chat chats = 1;
+}
+

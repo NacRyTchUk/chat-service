@@ -1,0 +1,171 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "api/service/v1/chat_service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "ChatService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/join": {
+      "post": {
+        "operationId": "ChatService_Join",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1JoinResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "chatId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          }
+        ],
+        "tags": [
+          "ChatService"
+        ]
+      }
+    },
+    "/list": {
+      "get": {
+        "operationId": "ChatService_List",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1ListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "ChatService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "v1Chat": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "v1JoinResponse": {
+      "type": "object",
+      "properties": {
+        "chat": {
+          "$ref": "#/definitions/v1Chat"
+        },
+        "messages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Message"
+          }
+        }
+      }
+    },
+    "v1ListResponse": {
+      "type": "object",
+      "properties": {
+        "chats": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/v1Chat"
+          }
+        }
+      }
+    },
+    "v1Message": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "chatId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "senderName": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}
