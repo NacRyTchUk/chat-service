@@ -5,8 +5,6 @@ import (
 	pb "chat-service/pkg/gen/go/api/service/v1"
 	"context"
 	"log"
-	"net/http"
-	"strconv"
 )
 
 func (server *ChatServiceServer) Join(ctx context.Context, request *pb.JoinRequest) (*pb.JoinResponse, error) {
@@ -33,28 +31,4 @@ func (server *ChatServiceServer) Join(ctx context.Context, request *pb.JoinReque
 		},
 		Messages: msgs,
 	}, nil
-}
-
-func (server *ChatServiceServer) ChatJoin(w http.ResponseWriter, r *http.Request) {
-	body, err := GetRequestBody[ChatJoinRequest](r)
-	if err != nil {
-		return
-	}
-	log.Println("body ", body)
-	id, err := strconv.Atoi(body.ChatId)
-	if err != nil {
-		return
-	}
-	chat, messages, err := server.chatService.ChatJoin(body.Name, int64(id))
-	log.Println("cme ", chat, messages)
-	if err != nil {
-		return
-	}
-	err = SetResponseBody[ChatJoinResponse](w, ChatJoinResponse{
-		Chat:         chat,
-		LastMessages: messages,
-	})
-	if err != nil {
-		return
-	}
 }
